@@ -1,0 +1,16 @@
+[
+    {
+    "theme": "light",
+    "primaryColor": "#007bff",
+    "layout": "minimal",
+    "welcomeMessage": "Welcome to Tenant A",
+    "customCSS": "/assets/tenantA_styles.css"
+    },
+    {
+    "theme": "dark",
+    "primaryColor": "#dc3545",
+    "layout": "detailed",
+    "welcomeMessage": "Welcome to Tenant B",
+    "customCSS": "/assets/tenantB_styles.css"
+    }
+]
