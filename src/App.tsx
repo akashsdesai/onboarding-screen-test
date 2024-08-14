@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import configurations from './configurations.json';
 import styles from './App.module.css';
+import './index.css'
 import OnboardingScreen from './OnboardingScreen';
-import { Button } from '@tremor/react';
+import Button from '@mui/material/Button';
+import { Box, Container, Typography } from '@mui/material';
 
 interface Config {
   theme: string;
   primaryColor: string;
   layout: string;
   welcomeMessage: string;
-  customCSS?: string;
+  customCSS: string;
 }
 
 interface AppProps {
@@ -18,7 +20,7 @@ interface AppProps {
 
 function App() {
   const [config, setConfig] = useState<Config | null>(null);
-  const [tenantId, setTenantId]=useState(8);
+  const [tenantId, setTenantId]=useState(0);
   const [welcomeScreen, setWelcomeScreen]=useState(false);
 
   useEffect(() => {
@@ -26,31 +28,35 @@ function App() {
     if (tenantConfig) {
       setWelcomeScreen(true);
       setConfig(tenantConfig);
-      if (tenantConfig.customCSS) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = tenantConfig.customCSS;;
-        document.head.appendChild(link);
-      }
     } else {
       console.error(`Configuration for tenant ${tenantId} not found.`);
     }
   }, [tenantId]);
 
   if (!config) {
-    return (<div>Loading...
-          <Button>Next Config</Button>
-    </div>
+    return (
+      <div>Loading ...
+      </div>
     )
   }
   return (
-    <div style={{ backgroundColor: config.primaryColor }}>
-      <Button>Next Config</Button>
-    <OnboardingScreen
-      layout={config.layout}
-      welcomeMessage={config.welcomeMessage}
-      theme={config.theme}
-    />
+    <div className={styles.main}>
+      {
+        welcomeScreen ?
+        <Container className={styles.container}>
+          <Typography variant="h1" component="h2">
+            {config.welcomeMessage}
+        </Typography>
+        <Button onClick={()=>setWelcomeScreen(false)} variant="contained">Start the Process</Button>
+        </Container>
+      :
+        <OnboardingScreen
+          style={config.customCSS}
+          layout={config.layout}
+          welcomeMessage={config.welcomeMessage}
+          theme={config.theme}
+        />
+        }
   </div>
   );
 }
