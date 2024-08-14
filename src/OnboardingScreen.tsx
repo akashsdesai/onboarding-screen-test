@@ -1,39 +1,65 @@
+import { useEffect, useState } from "react";
+import { NumberInput } from "./component/Input/input";
+import { CustomButton } from "./component/Button/button";
 
 interface OnboardingScreenProps {
     layout: string;
     welcomeMessage: string;
     theme: string;
+    style: string;
 }
 
-function OnboardingScreen({ layout, welcomeMessage, theme }: OnboardingScreenProps) {
+interface LayoutProps {
+    styles: any;
+}
+
+function OnboardingScreen({ layout, welcomeMessage, theme, style }: OnboardingScreenProps) {
+    const [styles, setStyles] = useState<any>(null);
+
+    useEffect(() => {
+        const loadStyles = async () => {
+            try {
+                const module = await import(style);
+                setStyles(module);
+            } catch (error) {
+                console.error("Error loading styles:", error);
+            }
+        };
+        loadStyles();
+    }, [style]);
+
+    if (!styles) return <div>Loading...</div>;
+
     return (
         <div className={`onboarding-screen ${theme}`}>
-        <h1>{welcomeMessage}</h1>
-        {layout === 'minimal' ? (
-            <MinimalLayout />
-        ) : (
-            <DetailedLayout />
-        )}
+            <h1>{welcomeMessage}</h1>
+            {layout === 'minimal' ? (
+                <MinimalLayout styles={styles} />
+            ) : (
+                <DetailedLayout styles={styles} />
+            )}
         </div>
     );
-};
+}
 
-function MinimalLayout () {
+function MinimalLayout({ styles }: LayoutProps) {
     return (
-        <div>
-        <p>This is a minimal layout for the onboarding process.</p>
-        {/* Add more minimal layout-specific content */}
+        <div className={styles.container}>
+            <p>This is a minimal layout for the onboarding process.</p>
+            <NumberInput placeholder="Number input here" width={245} />
+            <CustomButton type="contained" title="Add" fullWidth={false} />
         </div>
     );
-};
+}
 
-function DetailedLayout() {
+function DetailedLayout({ styles }: LayoutProps) {
     return (
-        <div>
-        <p>This is a detailed layout for the onboarding process.</p>
-        {/* Add more detailed layout-specific content */}
+        <div className={styles.container}>
+            <p>This is a detailed layout for the onboarding process.</p>
+            <NumberInput placeholder="Number input here" width={445} />
+            <CustomButton  type="outlined" title="Add" fullWidth={true} />
         </div>
     );
-};
+}
 
 export default OnboardingScreen;
